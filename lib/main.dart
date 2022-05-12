@@ -14,8 +14,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Stream Controller',
       theme: ThemeData(
-        // This is the theme of your application.
-
         primarySwatch: Colors.blue,
       ),
       home: const MyHomePage(title: 'Flutter Stream Controller'),
@@ -33,8 +31,20 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
   int counter = 0;
+  // This is For Single Stream Controller
   StreamController<int> streamController = StreamController<int>();
+
+  // This is for Multiple Stream Controller
+  late Stream multiStream;
+
+  @override
+  void initState() {
+    super.initState();
+    multiStream = streamController.stream.asBroadcastStream();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -44,28 +54,52 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: SafeArea(
         child: Center(
-          child: StreamBuilder(
-            stream: streamController.stream,
-            builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-              if (snapshot.hasData) {
-                return Text(
-                  snapshot.data.toString(),
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 100),
-                );
-              }
-              return const Text(
-                "0",
-                style:
-                    TextStyle(fontWeight: FontWeight.bold, fontSize: 100),
-              );
-            },
+
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // For Return Steam Builder
+              StreamBuilder(
+                stream: multiStream,
+                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                  if (snapshot.hasData) {
+                    return Text(
+                      snapshot.data.toString(),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 100),
+                    );
+                  }
+                  return const Text(
+                    "0",
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 100),
+                  );
+                },
+              ),  StreamBuilder(
+                stream: multiStream,
+                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                  if (snapshot.hasData) {
+                    return Text(
+                      snapshot.data.toString(),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 100),
+                    );
+                  }
+                  return const Text(
+                    "0",
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 100),
+                  );
+                },
+              ),
+            ],
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           counter++;
+          // For Subscribe Stream
           streamController.sink.add(counter);
         },
         child: const Icon(Icons.add),
